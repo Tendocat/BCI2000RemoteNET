@@ -87,6 +87,7 @@ namespace BCI2000RemoteNET
                 WriteLog("Result: ", value);
             }
         }
+
         private string sending;
         public string Sending
         {
@@ -106,6 +107,7 @@ namespace BCI2000RemoteNET
                 WriteLog("Sent: ", value);
             }
         }
+
         private string received;
         public string Received
         {
@@ -133,6 +135,7 @@ namespace BCI2000RemoteNET
                 WriteLog("Received: ", value);
             }
         }
+        
         public string Response { get; protected set; }
 
         //result is set by methods in this class, response is the response from BCI2000, as Execute() shouldn't overwrite Result
@@ -282,11 +285,11 @@ namespace BCI2000RemoteNET
         }
         public bool Execute(string command)
         {
-            int unused = 0;
-            return Execute(command, ref unused);
+            return Execute(command, out _);
         }
-        public bool Execute(string command, ref int outCode)
+        public bool Execute(string command, out int outCode)
         {
+            outCode = -1;
             Result = "";
             if (!Connected())
             {
@@ -309,12 +312,13 @@ namespace BCI2000RemoteNET
                 return false;
             }
             Received = responseUnprocessed;
-            return ProcessResponse(responseUnprocessed, ref outCode);
+            return ProcessResponse(responseUnprocessed, out outCode);
         }
 
-        public bool ProcessResponse(string responseUnprocessed, ref int outCode)
+        public bool ProcessResponse(string responseUnprocessed, out int outCode)
         {
             Response = "";
+            outCode = -1;
             byte[] buffer = new byte[1024];
             while (Connected() && (!(responseUnprocessed.IndexOf(Prompt, StringComparison.OrdinalIgnoreCase) >= 0)) || tcp.Client.Available > 0)
             {

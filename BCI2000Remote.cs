@@ -150,7 +150,7 @@ namespace BCI2000RemoteNET
                 if (!containsLocal)//according to original, all modules start with option --local; appends --local to command
                     moduleAndArgs.Append("--local ");
 
-                Execute("start executable " + moduleAndArgs.ToString(), ref outCode);
+                Execute("start executable " + moduleAndArgs.ToString(), out outCode);
                 if (outCode != 1)
                 {
                     errors.Append('\n' + module.Key + " returned " + outCode);
@@ -192,12 +192,12 @@ namespace BCI2000RemoteNET
         {
             bool success = true;
             Execute("get system state");
-            if (ResponseContains("Running"))
+            if (Response.Contains("Running"))
             {
                 Result = "System is already running";
                 success = false;
             }
-            else if (!ResponseContains("Resting") && !ResponseContains("Suspended"))
+            else if (!Response.Contains("Resting") && !Response.Contains("Suspended"))
                 success = SetConfig();
             if (success)
                 success = SimpleCommand("start system");
@@ -207,7 +207,7 @@ namespace BCI2000RemoteNET
         public bool Stop()
         {
             Execute("get system state");
-            if (!ResponseContains("Running"))
+            if (!Response.Contains("Running"))
             {
                 Result = "System is not running";
                 return false;
@@ -220,10 +220,11 @@ namespace BCI2000RemoteNET
             return SimpleCommand("set parameter \"" + name + "\" \"" + value + "\"");
         }
 
-        bool GetParameter(string name, ref string outValue)//uses a ref to avoid the problem of returning a value if the command fails
+        bool GetParameter(string name, out string outValue)
         {
+            outValue = "";
             int outCode = 0;
-            Execute("is parameter \"" + name + "\"", ref outCode);
+            Execute("is parameter \"" + name + "\"", out outCode);
             if (outCode == 1)//name is a valid parameter
             {
                 Execute("get parameter \"" + name + "\"");
@@ -312,7 +313,7 @@ namespace BCI2000RemoteNET
             return SimpleCommand("wait for " + state);
         }
 
-        public bool GetSystemState(ref string outState)
+        public bool GetSystemState(out string outState)
         {
             bool success = SimpleCommand("get system state");
             outState = Response;
@@ -344,8 +345,6 @@ namespace BCI2000RemoteNET
             return stringFinal.ToString();
         }
 
-
-
         private int Atoi(string str)//implementation of c atoi() since original code uses it
         {
             int output;
@@ -358,17 +357,6 @@ namespace BCI2000RemoteNET
                 output = 0;
             }
             return output;
-        }
-
-        private bool Stricmp(string str1, string str2) // implementation of c stricmp
-        {
-            if (str1 == null || str2 == null)
-                return false;
-            return str1.IndexOf(str2, StringComparison.OrdinalIgnoreCase) >= 0;
-        }
-        private bool ResponseContains(string str1)//using stricmp on result is annoying
-        {
-            return Stricmp(Response, str1);
         }
     }
 }

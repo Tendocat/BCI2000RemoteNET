@@ -73,8 +73,7 @@ namespace BCI2000RemoteNET
         public bool StopOnQuit { get; set; }
         public bool DisconnectOnQuit { get; set; }
 
-
-        private char[] trimChars =  new char[] { '\r', '\n', ' ', '>' };
+        private static readonly char[] trimChars =  new char[] { '\r', '\n', ' ', '>' };
 
         public BCI2000Remote()
         {

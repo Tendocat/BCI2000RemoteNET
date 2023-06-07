@@ -416,7 +416,7 @@ namespace BCI2000RemoteNET
         }
         private void WriteLog(string logPreface, string toLog)
         {
-            if (Log == null)
+            if (Log == null || Log.BaseStream == null)
                 Log = new StreamWriter(LogFile);
             if (Log != null && !String.IsNullOrWhiteSpace(toLog))
             {

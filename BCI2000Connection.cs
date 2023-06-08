@@ -38,40 +38,18 @@ namespace BCI2000RemoteNET
         private const string ExitCodeTag = "\\ExitCode";
         private const string TerminationTag = "\\Terminating";
         private const string Prompt = ">";
-
-        private string logFile;
-        public string LogFile
-        {
-            get
-            {
-                return logFile;
-            }
-            set
-            {
-                logFile = value;
-                if (Log == null)
-                    return;
-                if (Log != null)
-                    Log.Close();
-            }
-        }
-        protected StreamWriter Log { get; set; }
-        
         
         private bool LastLogState { get; set; } //was the last thing sent a command to set state
 
         public bool LogStates { get; set; } //sets whether to log commands to set state, along with the received prompts afterwards
         public bool LogPrompts { get; set; } //sets whether to log all received prompts
-
+        public string LogFile {get; set;} //sets log file path, directory should exists
 
         //changes to these will only take effect on Connect()
         public int Timeout { get; set; } //send and recieve timeout in ms
         public string TelnetIp { get; set; }
         public Int32 TelnetPort { get; set; }
         public string OperatorPath { get; set; }
-
-
-
 
         private string result; //three properties for results and logging
         public string Result
@@ -136,7 +114,7 @@ namespace BCI2000RemoteNET
             }
         }
         
-        public string Response { get; protected set; }
+        public string Response { get; protected set; } = "";
 
         //result is set by methods in this class, response is the response from BCI2000, as Execute() shouldn't overwrite Result
         private bool TerminateOperator { get; set; }
@@ -177,7 +155,6 @@ namespace BCI2000RemoteNET
             }
         }
 
-
         public BCI2000Connection()
         {
             Timeout = defaultTimeout;
@@ -189,12 +166,6 @@ namespace BCI2000RemoteNET
             LogStates = defaultLogStates;
             LogPrompts = defaultLogPrompts;
         }
-
-        ~BCI2000Connection()
-        {
-            Log.Close();
-        }
-
 
         //Ends connection to operator, terminates operator if it was started by a previous Connect() call
         public bool Disconnect()
@@ -416,9 +387,9 @@ namespace BCI2000RemoteNET
         }
         private void WriteLog(string logPreface, string toLog)
         {
-            if (Log == null || Log.BaseStream == null)
-                Log = new StreamWriter(LogFile);
-            if (Log != null && !String.IsNullOrWhiteSpace(toLog))
+            if (String.IsNullOrWhiteSpace(toLog))
+                return;
+            using (StreamWriter Log = File.AppendText(LogFile))
             {
                 Log.WriteLine(DateTime.Now.ToString("HH:mm:ss:fff") + ' ' + logPreface + ' ' + toLog);
                 Log.Flush();

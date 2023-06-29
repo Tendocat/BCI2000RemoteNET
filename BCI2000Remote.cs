@@ -52,6 +52,21 @@ namespace BCI2000RemoteNET
             }
         }
 
+        private string runID;
+        public string RunID
+        {
+            get
+            {
+                return runID;
+            }
+            set
+            {
+                runID = value;
+                if (Connected() && !String.IsNullOrEmpty(runID))
+                    Execute("set parameter SubjectRun \"" + runID + "\"");
+            }
+        }
+
         private string dataDirectory;
         public string DataDirectory
         {
@@ -109,6 +124,8 @@ namespace BCI2000RemoteNET
                     SubjectID = subjectID;
                 if (!String.IsNullOrEmpty(SessionID))
                     SessionID = sessionID;
+                if (!String.IsNullOrEmpty(RunID))
+                    RunID = runID;
                 if (!String.IsNullOrEmpty(DataDirectory))
                     DataDirectory = dataDirectory;
             }

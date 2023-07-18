@@ -236,7 +236,7 @@ namespace BCI2000RemoteNET
             return SimpleCommand("set parameter \"" + name + "\" \"" + value + "\"");
         }
 
-        bool GetParameter(string name, out string outValue)
+        public bool GetParameter(string name, out string outValue)
         {
             outValue = "";
             int outCode = 0;
@@ -244,7 +244,7 @@ namespace BCI2000RemoteNET
             if (outCode == 1)//name is a valid parameter
             {
                 Execute("get parameter \"" + name + "\"");
-                outValue = Response;
+                outValue = Response.Trim(trimChars);
                 return true;
             }
             else

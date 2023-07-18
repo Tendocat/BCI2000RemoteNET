@@ -22,7 +22,7 @@ namespace BCI2000RemoteNET
 {
     public class BCI2000Remote : BCI2000Connection //All public methods are boolean and return true if they succeed, false if they fail. Data output is handled by passing a reference.
     {
-        private string subjectID;
+        private string subjectID = "";
         public string SubjectID
         {
             get
@@ -37,7 +37,7 @@ namespace BCI2000RemoteNET
             }
         }
 
-        private string sessionID;
+        private string sessionID = "";
         public string SessionID
         {
             get
@@ -52,7 +52,7 @@ namespace BCI2000RemoteNET
             }
         }
 
-        private string runID;
+        private string runID = "";
         public string RunID
         {
             get
@@ -67,7 +67,7 @@ namespace BCI2000RemoteNET
             }
         }
 
-        private string dataDirectory;
+        private string dataDirectory = "";
         public string DataDirectory
         {
             get

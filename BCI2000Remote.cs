@@ -22,6 +22,8 @@ namespace BCI2000RemoteNET
 {
     public class BCI2000Remote : BCI2000Connection //All public methods are boolean and return true if they succeed, false if they fail. Data output is handled by passing a reference.
     {
+        private const int defaultSetConfigTimeout = 60000;
+        
         private string subjectID = "";
         public string SubjectID
         {
@@ -185,6 +187,8 @@ namespace BCI2000RemoteNET
 
         public bool SetConfig()
         {
+            int oldTimeOut = Timeout;
+            Timeout = defaultSetConfigTimeout;
             SubjectID = subjectID;
             SessionID = sessionID;
             DataDirectory = dataDirectory;
@@ -201,6 +205,7 @@ namespace BCI2000RemoteNET
             if (!String.IsNullOrWhiteSpace(tempResult) && !tempResult.Equals(">"))//set config caused errors
                 Result = tempResult + '\n' + Response;
             bool success = true;
+            Timeout = oldTimeOut;
             return success;
         }
 

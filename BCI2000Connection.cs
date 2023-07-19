@@ -45,8 +45,17 @@ namespace BCI2000RemoteNET
         public bool LogPrompts { get; set; } //sets whether to log all received prompts
         public string LogFile {get; set;} //sets log file path, directory should exists
 
+        private int timeout;
+        public int Timeout {
+            get => timeout;
+            set {
+                timeout = value;
+                tcp.SendTimeout = timeout;
+                tcp.ReceiveTimeout = timeout;
+            }
+        } //send and receive timeout in ms
+
         //changes to these will only take effect on Connect()
-        public int Timeout { get; set; } //send and recieve timeout in ms
         public string TelnetIp { get; set; }
         public Int32 TelnetPort { get; set; }
         public string OperatorPath { get; set; }
@@ -157,7 +166,7 @@ namespace BCI2000RemoteNET
 
         public BCI2000Connection()
         {
-            Timeout = defaultTimeout;
+            timeout = defaultTimeout;
             TelnetIp = defaultTelnetIp;
             TelnetPort = defaultTelnetPort;
             WindowVisible = defaultWindowVisible;
